@@ -3,7 +3,7 @@ import InputSin from "./InputSin";
 const App = () => {
   return (
     <div>
-      <h1>Hello World</h1>
+      <h1>Enter Sin:</h1>
       <InputSin />
     </div>
   );

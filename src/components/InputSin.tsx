@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useState } from "react";
 
 const InputSin = () => {
   const [sin, setSin] = useState("");
+  const [sins, setSins] = useState<string[]>([]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSin(event.target.value);
@@ -13,6 +14,7 @@ const InputSin = () => {
       return;
     }
     setSin("");
+    setSins([...sins, sin]);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -31,6 +33,11 @@ const InputSin = () => {
         onKeyDown={handleKeyDown}
       />
       <button onClick={onAddClick}>ADD</button>
+      <div>
+        {sins.map((sin) => (
+          <div key={sin}>{sin}</div>
+        ))}
+      </div>
     </div>
   );
 };
