@@ -10,7 +10,7 @@ export default function Home() {
       <Head>
         <title>HellApp</title>
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <main className="flex min-h-screen flex-col items-center justify-between p-24 w-62">
         <App />
       </main>
     </>
