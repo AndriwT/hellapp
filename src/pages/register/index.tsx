@@ -1,12 +1,8 @@
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import Head from "next/head";
 import React, { ChangeEvent, useState } from "react";
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,10 +13,10 @@ export default function Login() {
     setPassword(e.target.value);
   };
 
-  const login = () => {
+  const signUp = () => {
     const auth = getAuth();
 
-    signInWithEmailAndPassword(auth, email, password)
+    createUserWithEmailAndPassword(auth, email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
         console.log(user);
@@ -30,13 +26,13 @@ export default function Login() {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        alert("LOGIN ERROR: " + errorMessage + "ERROR CODE: " + errorCode);
+        alert("SIGNUP ERROR: " + errorMessage + "ERROR CODE: " + errorCode);
       });
   };
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">
-      <h1>Log In</h1>
+      <h1>Register</h1>
       <div className="flex flex-col justify-center items-center mt-10 w-60">
         <input
           className="flex justify-center rounded-md shadow-md p-2 mt-4"
@@ -54,9 +50,9 @@ export default function Login() {
         />
         <button
           className="mt-2 bg-lime-500 text-white rounded-md shadow-md p-4 w-48"
-          onClick={login}
+          onClick={signUp}
         >
-          Login
+          Register
         </button>
       </div>
     </div>
