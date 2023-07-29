@@ -1,6 +1,7 @@
-import { User, getAuth, signOut } from "firebase/auth";
+import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import {
+  DocumentData,
   addDoc,
   collection,
   doc,
@@ -28,20 +29,13 @@ interface Karma {
   score: number;
 }
 
+type UserData = DocumentData | null;
+
 export default function App({ user }: { user: User | null }) {
+  const [userData, setUserData] = useState<UserData>(null);
   const [sin, setSin] = useState("");
   const [sins, setSins] = useState<Sin[]>([]);
   const [karma, setKarma] = useState<Karma | null>(null);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSin(event.target.value);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onSinClick();
-    }
-  };
 
   async function getSins() {
     const sinsRef = collection(db, "sins");
@@ -54,7 +48,6 @@ export default function App({ user }: { user: User | null }) {
       const itemData = item.data() as Sin;
       fetchedSins.push(itemData);
     });
-    fetchedSins.sort();
     setSins(fetchedSins);
   }
 
@@ -110,9 +103,34 @@ export default function App({ user }: { user: User | null }) {
     }
   }
 
+  async function getUserData(email: string | null) {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const userData = querySnapshot.docs[0].data();
+      return userData;
+    } else {
+      return null;
+    }
+  }
+
   useEffect(() => {
     getSins();
     getKarma();
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // If the user is authenticated, get user data from Firestore
+        const userData = await getUserData(user.email);
+        setUserData(userData);
+      } else {
+        // Handle when user is not authenticated
+        setUserData(null);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   async function onSinClick() {
@@ -126,9 +144,10 @@ export default function App({ user }: { user: User | null }) {
         text: sin,
         timestamp: Date.now(),
       });
+      await getSins();
+      await updateKarma();
     }
-    await getSins();
-    await updateKarma();
+
     setSin("");
   }
 
@@ -148,44 +167,67 @@ export default function App({ user }: { user: User | null }) {
     }
   };
 
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSin(event.target.value);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onSinClick();
+    }
+  };
+
   return (
-    <div className="flex flex-col ">
-      <h1 className="text-3xl flex justify-center pb-20">Hell Counter</h1>
-      <div className="flex flex-row static">
-        <div className="absolute left-80">
-          {sins.map((sin) => (
-            <div
-              className="bg-stone-400 mt-2 mb-2 p-2 rounded-full "
-              key={sin.id}
-            >
-              {sin.text}
-            </div>
-          ))}
+    <div className="flex flex-col justify-center items-center">
+      <h1 className="text-5xl flex justify-center pb-4 mt-20">
+        Welcome {userData?.username} !
+      </h1>
+      <h2 className="text-4xl flex justify-center pb-20">
+        This is your HellCount
+      </h2>
+      <div className="flex flex-row">
+        <div className="flex flex-col h-screen">
+          <div className="overflow-y-auto">
+            {sins.map((sin) => (
+              <div
+                className="bg-stone-300 mt-2 mb-2 mr-20 p-8 w-96 rounded-xl shadow-md "
+                key={sin.id}
+              >
+                <p>{sin.text}</p>
+                <p className="text-xs text-stone-400">
+                  {new Date(sin.timestamp).toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="absolute bottom-80 top-60 right-60">
-          <h1 className="text-8xl mb-20 ml-24">{karma?.score || 0}</h1>
-          <h2>Enter Sin:</h2>
-          <input
-            placeholder="Enter text"
-            className="text-black p-2 rounded-xl"
-            onChange={handleChange}
-            value={sin}
-            onKeyDown={handleKeyDown}
-          />
+        <div className="flex flex-col  items-center bottom-80 right-60">
+          <h1 className="flex justify-center items-center text-8xl mb-12 bg-stone-300 w-52 h-52 rounded-full shadow-md">
+            {karma?.score || 0}
+          </h1>
+          <div className="flex">
+            <input
+              placeholder="Confess your Sin"
+              className="text-black p-2 rounded-l-xl shadow-md"
+              onChange={handleChange}
+              value={sin}
+              onKeyDown={handleKeyDown}
+            />
+            <button
+              className="bg-red-500 text-white p-2 rounded-r-xl shadow-md click:shadow-inner"
+              onClick={onSinClick}
+            >
+              Log Sin
+            </button>
+          </div>
           <button
-            className="bg-red-500 p-2 ml-2 rounded-xl"
-            onClick={onSinClick}
+            className="mt-8 bg-red-500 text-white text-center rounded-xl shadow-md p-4 w-48 static"
+            onClick={logout}
           >
-            ADD
+            Logout
           </button>
         </div>
       </div>
-      <button
-        className="mt-5 bg-red-500 text-white text-center rounded-md shadow-md p-4 w-48"
-        onClick={logout}
-      >
-        Logout
-      </button>
     </div>
   );
 }

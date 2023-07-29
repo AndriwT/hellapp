@@ -1,10 +1,6 @@
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import Head from "next/head";
-import React, { ChangeEvent, useState } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
+import React, { ChangeEvent, KeyboardEvent, useState } from "react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -15,6 +11,12 @@ export default function Login() {
   };
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      login();
+    }
   };
 
   const login = () => {
@@ -36,7 +38,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">
-      <h1>Log In</h1>
+      <h1>Log into Account</h1>
       <div className="flex flex-col justify-center items-center mt-10 w-60">
         <input
           className="flex justify-center rounded-md shadow-md p-2 mt-4"
@@ -51,6 +53,7 @@ export default function Login() {
           type="password"
           placeholder="Password..."
           onChange={handlePasswordChange}
+          onKeyDown={handleKeyDown}
         />
         <button
           className="mt-2 bg-lime-500 text-white rounded-md shadow-md p-4 w-48"
@@ -58,6 +61,12 @@ export default function Login() {
         >
           Login
         </button>
+        <Link
+          className="mt-2 bg-lime-300 text-white text-center rounded-md shadow-md p-4 w-48"
+          href="/register"
+        >
+          Sign Up
+        </Link>
       </div>
     </div>
   );
