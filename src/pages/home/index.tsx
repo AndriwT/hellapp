@@ -179,55 +179,55 @@ export default function App({ user }: { user: User | null }) {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <h1 className="text-5xl flex justify-center pb-4 mt-20">
+      <h1 className="text-[#CA6702] text-5xl flex justify-center pb-4 mt-12">
         Welcome {userData?.username} !
       </h1>
-      <h2 className="text-4xl flex justify-center pb-20">
+      <h2 className="text-[#BB3E03] text-4xl flex justify-center pb-20">
         This is your HellCount
       </h2>
-      <div className="flex flex-row">
+      <div className="flex flex-col  items-center bottom-80 right-60">
+        <h1 className="flex justify-center items-center text-[#AE2012] text-8xl mb-12 w-52 h-52 rounded-full shadow-[#9B2226] shadow-md">
+          {karma?.score || 0}
+        </h1>
+        <div className="flex mb-10">
+          <input
+            placeholder="Confess your Sin"
+            className="text-[#F7F1DE] bg-[#002C3D] p-2 rounded-l-xl shadow-md w-72 h-16 outline-none border-[#002C3D]"
+            onChange={handleChange}
+            value={sin}
+            onKeyDown={handleKeyDown}
+          />
+          <button
+            className="bg-[#AE2012] text-[#F7F1DE] hover:bg-[#CB2415] focus:bg-[#A61E11] p-2 rounded-r-xl shadow-md click:shadow-inner w-24 border-none"
+            onClick={onSinClick}
+          >
+            Log Sin
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-row flex-wrap justify-center">
         <div className="flex flex-col h-screen">
           <div className="overflow-y-auto">
             {sins.map((sin) => (
               <div
-                className="bg-stone-300 mt-2 mb-2 mr-20 p-8 w-96 rounded-xl shadow-md "
+                className="bg-[#9B2226] mt-2 mb-2 p-8 w-96 rounded-xl shadow-md "
                 key={sin.id}
               >
-                <p>{sin.text}</p>
-                <p className="text-xs text-stone-400">
+                <p className="text-[#F7F1DE]">{sin.text}</p>
+                <p className="text-xs text-[#CA6702]">
                   {new Date(sin.timestamp).toLocaleString()}
                 </p>
               </div>
             ))}
           </div>
         </div>
-        <div className="flex flex-col  items-center bottom-80 right-60">
-          <h1 className="flex justify-center items-center text-8xl mb-12 bg-stone-300 w-52 h-52 rounded-full shadow-md">
-            {karma?.score || 0}
-          </h1>
-          <div className="flex">
-            <input
-              placeholder="Confess your Sin"
-              className="text-black p-2 rounded-l-xl shadow-md"
-              onChange={handleChange}
-              value={sin}
-              onKeyDown={handleKeyDown}
-            />
-            <button
-              className="bg-red-500 text-white p-2 rounded-r-xl shadow-md click:shadow-inner"
-              onClick={onSinClick}
-            >
-              Log Sin
-            </button>
-          </div>
-          <button
-            className="mt-8 bg-red-500 text-white text-center rounded-xl shadow-md p-4 w-48 static"
-            onClick={logout}
-          >
-            Logout
-          </button>
-        </div>
       </div>
+      <button
+        className="mt-8 mb-4 bg-[#AE2012] text-[#F7F1DE] hover:bg-[#CB2415] focus:bg-[#A61E11] text-center rounded-xl shadow-md p-4 w-48 static"
+        onClick={logout}
+      >
+        Logout
+      </button>
     </div>
   );
 }

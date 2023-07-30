@@ -82,24 +82,24 @@ export default function Register() {
 
   return (
     <div className="flex flex-col justify-center items-center mt-20">
-      <h1>Create an Account</h1>
+      <h1 className="text-[#005F73] text-4xl">Create an Account</h1>
       <div className="flex flex-col justify-center items-center mt-10 w-60">
         <input
-          className="flex justify-center rounded-md shadow-md p-2 mt-4"
+          className="bg-[#F7F1DE] flex justify-center rounded-md shadow-md p-2 mt-4"
           value={username}
           type="text"
           placeholder="Username..."
           onChange={handleUsernameChange}
         />
         <input
-          className="flex justify-center rounded-md shadow-md p-2 mt-4"
+          className="bg-[#F7F1DE] flex justify-center rounded-md shadow-md p-2 mt-2"
           value={email}
           type="email"
           placeholder="Email..."
           onChange={handleEmailChange}
         />
         <input
-          className="flex justify-center rounded-md shadow-md p-2 mt-4"
+          className="bg-[#F7F1DE] flex justify-center rounded-md shadow-md p-2 mt-2"
           value={password}
           type="password"
           placeholder="Password..."
@@ -107,13 +107,13 @@ export default function Register() {
           onKeyDown={handleKeyDown}
         />
         <button
-          className="mt-2 bg-lime-500 text-white rounded-md shadow-md p-4 w-48"
+          className="mt-4 bg-[#0A9396] text-[#F7F1DE] rounded-md shadow-md p-4 w-48"
           onClick={signUp}
         >
           Register
         </button>
         <Link
-          className="mt-2 bg-lime-300 text-white text-center rounded-md shadow-md p-4 w-48"
+          className="mt-2 bg-[#F7F1DE] text-[#0A9396] text-center rounded-md shadow-md p-4 w-48"
           href="/login"
         >
           Log In
