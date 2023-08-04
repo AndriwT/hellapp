@@ -1,5 +1,5 @@
 import { User, getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useState, useRef } from "react";
 import {
   DocumentData,
   addDoc,
@@ -21,6 +21,7 @@ interface Sin {
   id: number;
   userId: string;
   text: string;
+  karma: number;
   timestamp: number;
 }
 
@@ -76,7 +77,7 @@ export default function App({ user }: { user: User | null }) {
       const karmaDoc = querySnapshot.docs[0];
       const existingKarma = karmaDoc.data() as Karma;
 
-      const randomScore = Math.floor(Math.random() * 10) + 1;
+      let randomScore = Math.floor(Math.random() * 10) + 1;
 
       const updatedKarmaScore = existingKarma.score + randomScore; // Increase karma score by 10 (for example).
 
@@ -135,6 +136,7 @@ export default function App({ user }: { user: User | null }) {
 
   async function onSinClick() {
     const id = uuid();
+
     if (!sin) {
       alert("You need to confess!");
     } else {
@@ -142,6 +144,7 @@ export default function App({ user }: { user: User | null }) {
         id,
         userId: user?.uid,
         text: sin,
+        karma: karma?.score,
         timestamp: Date.now(),
       });
       await getSins();
@@ -192,7 +195,7 @@ export default function App({ user }: { user: User | null }) {
         <div className="flex mb-10">
           <input
             placeholder="Confess your Sin"
-            className="text-[#F7F1DE] bg-[#002C3D] p-2 rounded-l-xl shadow-md w-72 h-16 outline-none border-[#002C3D]"
+            className="text-[#F7F1DE] bg-[#002C3D] p-2 rounded-l-xl shadow-md w-64 h-16 outline-none border-[#002C3D]"
             onChange={handleChange}
             value={sin}
             onKeyDown={handleKeyDown}
@@ -210,13 +213,16 @@ export default function App({ user }: { user: User | null }) {
           <div className="overflow-y-auto">
             {sins.map((sin) => (
               <div
-                className="bg-[#9B2226] mt-2 mb-2 p-8 w-96 rounded-xl shadow-md "
+                className="flex bg-[#9B2226] mt-2 mb-2 p-8 w-80 rounded-xl shadow-md "
                 key={sin.id}
               >
-                <p className="text-[#F7F1DE]">{sin.text}</p>
-                <p className="text-xs text-[#CA6702]">
-                  {new Date(sin.timestamp).toLocaleString()}
-                </p>
+                <div>
+                  <p className="text-[#F7F1DE]">{sin.text}</p>
+                  <p className="text-xs text-[#CA6702]">
+                    {new Date(sin.timestamp).toLocaleString()}
+                  </p>
+                </div>
+                <p className="ml-20 text-[#F7F1DE] text-3xl">+{sin.karma}</p>
               </div>
             ))}
           </div>
